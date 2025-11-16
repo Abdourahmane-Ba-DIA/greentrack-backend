@@ -3,7 +3,7 @@ node_modules
 npm-debug.log
 yarn-error.log
 
-# Dépendances Laravel locales (Docker les réinstalle)
+# Dépendances Laravel locales (Docker va réinstaller)
 vendor
 
 # Git
