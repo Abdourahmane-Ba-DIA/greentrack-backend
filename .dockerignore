@@ -3,7 +3,7 @@ node_modules
 npm-debug.log
 yarn-error.log
 
-# Dépendances Laravel (réinstallées dans Docker)
+# Dépendances Laravel locales (Docker les réinstalle)
 vendor
 
 # Git
@@ -15,13 +15,13 @@ vendor
 .env.local
 .env.*.backup
 
-# Logs et cache
+# Logs et cache locaux
 storage/logs/*
 storage/framework/cache/data/*
 storage/framework/sessions/*
 storage/framework/views/*
 
-# Fichiers temporaires
+# Fichiers temporaires et IDE
 .DS_Store
 Thumbs.db
 .idea
