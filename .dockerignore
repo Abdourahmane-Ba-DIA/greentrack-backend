@@ -1,0 +1,29 @@
+# Node modules et caches locaux
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Dépendances Laravel (réinstallées dans Docker)
+vendor
+
+# Git
+.git
+.gitignore
+
+# Fichiers d'environnement locaux
+.env
+.env.local
+.env.*.backup
+
+# Logs et cache
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Fichiers temporaires
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
