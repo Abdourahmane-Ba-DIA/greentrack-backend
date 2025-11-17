@@ -1,37 +1,31 @@
-# Étape 1 : PHP 8.2 FPM avec extensions nécessaires
 FROM php:8.2-fpm
 
-# Installer les dépendances système
+# Installation des dépendances système
 RUN apt-get update && apt-get install -y \
     git \
+    zip \
     unzip \
     curl \
-    libzip-dev \
-    zip \
     libpng-dev \
+    libjpeg-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    libzip-dev \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql mysqli
 
-# Installer Composer
+# Installation de Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Définir le dossier de travail
-WORKDIR /var/www
-
-# Copier le code Laravel
+# Copier les fichiers de l'application
+WORKDIR /app
 COPY . .
 
-# Installer les dépendances PHP
+# Installer les dépendances Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Définir la variable d'environnement APP_KEY dans Docker
-# Remplace 'ta_cle_laravel' par la clé générée localement
-ENV APP_KEY=base64:7AZd8gYBr4MbvM5ToGQeSBA7zWCDH8EbgB9hjVyrTkg=
+# Donner permissions au dossier storage
+RUN chmod -R 777 storage bootstrap/cache
 
-# Exposer le port pour Render
-EXPOSE 8000
-
-# Lancer Laravel
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"]
+# Exécuter migrations automatiquement
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
