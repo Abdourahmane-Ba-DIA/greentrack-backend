@@ -1,31 +1,32 @@
+# ---- Base image PHP ----
 FROM php:8.2-fpm
 
-# Installation des dépendances système
+# ---- Install system dependencies ----
 RUN apt-get update && apt-get install -y \
     git \
-    zip \
     unzip \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql mysqli
+    && docker-php-ext-install pdo pdo_pgsql
 
-# Installation de Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# ---- Install Composer ----
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
-# Copier les fichiers de l'application
-WORKDIR /app
+# ---- Copy application files ----
+WORKDIR /var/www/html
 COPY . .
 
-# Installer les dépendances Laravel
-RUN composer install --no-dev --optimize-autoloader
+# ---- Install PHP dependencies ----
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Donner permissions au dossier storage
-RUN chmod -R 777 storage bootstrap/cache
+# ---- Laravel storage & cache permissions ----
+RUN mkdir -p storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
 
-# Exécuter migrations automatiquement
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# ---- Copy and allow entrypoint ----
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
